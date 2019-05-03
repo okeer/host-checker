@@ -8,7 +8,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset
 import org.jboss.shrinkwrap.api.spec.JavaArchive
 import org.jboss.shrinkwrap.api.spec.WebArchive
 import org.jboss.shrinkwrap.resolver.api.maven.Maven
-import org.junit.Assert.assertNull
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import javax.inject.Inject
@@ -21,7 +21,7 @@ class RequestServiceTest {
 
     @Test
     fun whenContainerStarted_EJBShouldBeInjected() {
-        assertNull(service)
+        assertNotNull(service)
     }
 
     companion object {
