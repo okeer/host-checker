@@ -13,7 +13,7 @@ pipeline {
         stage('Run arquillian tests') {
             steps {
                 echo 'Running tests'
-                sh 'JBOSS_HOME=/root/wildfly-11.0.0.Final  mvn test -P arq-wildfly-managed'
+                sh 'JBOSS_HOME=$JBOSS_HOME  mvn test -P arq-wildfly-managed'
             }
         }
         stage('Build Docker Image') {
