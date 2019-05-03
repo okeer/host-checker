@@ -1,0 +1,36 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: hostchecker-backend-canary-service
+spec:
+  type: ClusterIP
+  selector:
+    app: hostchecker-backend-canary
+  ports:
+    - protocol: TCP
+      port: 8082
+      targetPort: 8080
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hostchecker-backend-canary-deployment
+  labels:
+    app: hostchecker-backend-canary
+spec:
+  replicas: $CANARY_REPLICAS
+  selector:
+    matchLabels:
+      app: hostchecker-backend-canary
+  template:
+    metadata:
+      labels:
+        app: hostchecker-backend-canary
+    spec:
+      containers:
+        - name: hostchecker-backend-canary
+          image: $DOCKER_IMAGE_NAME:$BUILD_NUMBER
+          ports:
+            - containerPort: 8080
