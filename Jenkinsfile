@@ -10,6 +10,12 @@ pipeline {
                 sh 'mvn compile war:war -X -U'
             }
         }
+        stage('Run arquillian tests') {
+            steps {
+                echo 'Running tests'
+                sh 'JBOSS_HOME=/root/wildfly-11.0.0.Final  mvn test -P arq-wildfly-managed'
+            }
+        }
         stage('Build Docker Image') {
             when {
                 branch 'master'
