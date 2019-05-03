@@ -1,0 +1,36 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: hostchecker-backend-service
+spec:
+  type: NodePort
+  selector:
+    app: hostchecker-backend
+  ports:
+    - protocol: TCP
+      port: 8080
+      nodePort: 8081
+
+---
+
+apiVersion: extensions/v1
+kind: Deployment
+metadata:
+  name: hostchecker-backend-deployment
+  labels:
+    app: hostchecker-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hostchecker-backend
+  template:
+    metadata:
+      labels:
+        app: hostchecker-backend
+    spec:
+      containers:
+        - name: hostchecker-backend
+          image: $DOCKER_IMAGE_NAME:$BUILD_NUMBER
+          ports:
+          - containerPort: 8080
