@@ -1,6 +1,6 @@
 package com.okeer.hostchecker.backend.controllers
 
-import com.okeer.hostchecker.backend.services.RequestService
+import com.okeer.hostchecker.backend.services.RequestServiceBean
 import javax.inject.Inject
 import javax.json.Json
 import javax.ws.rs.GET
@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response
 open class RequestController {
 
     @Inject
-    private lateinit var requestService : RequestService
+    private lateinit var requestServiceBean : RequestServiceBean
 
     companion object {
         @JvmStatic
@@ -33,7 +33,7 @@ open class RequestController {
             return generateErrorResponse(400, "$url is not http url")
 
         return try {
-            Response.ok().entity(requestService.getProxiedResponseDTO(url)).build()
+            Response.ok().entity(requestServiceBean.getProxiedResponseDTO(url)).build()
         }
         catch (e : Exception) {
             generateErrorResponse(500, "Failed to send request: ${e.message}")

@@ -5,7 +5,7 @@ import javax.ejb.Stateless
 import javax.ws.rs.client.ClientBuilder
 
 @Stateless
-open class RequestService {
+open class RequestServiceBean {
     fun getProxiedResponseDTO(url : String) : RequestDTO = ClientBuilder.newClient()
             .let { RequestDTO(url, it.target(url).request().get().status) }
 }

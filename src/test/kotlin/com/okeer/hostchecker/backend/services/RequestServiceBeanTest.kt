@@ -14,14 +14,14 @@ import org.junit.runner.RunWith
 import javax.inject.Inject
 
 @RunWith(Arquillian::class)
-class RequestServiceTest {
+class RequestServiceBeanTest {
 
     @Inject
-    internal lateinit var service : RequestService
+    internal lateinit var serviceBean : RequestServiceBean
 
     @Test
     fun whenContainerStarted_EJBShouldBeInjected() {
-        assertNotNull(service)
+        assertNotNull(serviceBean)
     }
 
     companion object {
@@ -38,7 +38,7 @@ class RequestServiceTest {
 
             return ShrinkWrap.create(WebArchive::class.java, "test.war")
                     .addPackage(RequestDTO::class.java.`package`)
-                    .addPackage(RequestService::class.java.`package`)
+                    .addPackage(RequestServiceBean::class.java.`package`)
                     .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
                     .addAsLibraries(kotlinRuntime)
         }
