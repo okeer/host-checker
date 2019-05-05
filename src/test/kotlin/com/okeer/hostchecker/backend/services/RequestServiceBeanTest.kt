@@ -8,6 +8,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset
 import org.jboss.shrinkwrap.api.spec.JavaArchive
 import org.jboss.shrinkwrap.api.spec.WebArchive
 import org.jboss.shrinkwrap.resolver.api.maven.Maven
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,6 +24,15 @@ class RequestServiceBeanTest {
     fun whenContainerStarted_EJBShouldBeInjected() {
         assertNotNull(serviceBean)
     }
+
+    @Test
+    fun givenValidGoogleUrl_whenGET_301IsReturned() =
+            assertEquals(
+                    301,
+                    serviceBean
+                            .getProxiedResponseDTO("http://google.com")
+                            .status
+            )
 
     companion object {
         @JvmStatic
