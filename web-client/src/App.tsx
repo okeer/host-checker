@@ -33,13 +33,9 @@ export default class App extends React.Component<AppProps, AppState> {
       setTimeout(async () => {
         reject(new Error("timeout"));
       }, 1000);
-      fetch(
-        `http://localhost:3001/check?host=${this.state.host}&port=${this.state.port}`
-      ).then(resolve, reject);
+
+      fetch(`check?host=${this.state.host}&port=${this.state.port}`).then(resolve, reject);
     });
-    // return await fetch(
-    //   `http://localhost:3001/check?host=${this.state.host}&port=${this.state.port}`
-    // );
   }
 
   onPortChanged(e: any) {
@@ -75,22 +71,23 @@ export default class App extends React.Component<AppProps, AppState> {
 
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <label>Check if a port on host is open</label>
+      <React.Fragment>
+        <header className="check-header">
+          <label>Check TCP port</label>
           <form
             onSubmit={e => {
               this.onSubmit(e);
             }}
-            className="simple-form"
+            className="check-form"
           >
             <input
               type="text"
+              className="host-input"
               value={this.state.host}
               onChange={e => {
                 this.onHostChanged(e);
               }}
-              placeholder="Domain name or IP address"
+              placeholder="Domain name or IP"
               required
             />
             <input
@@ -103,9 +100,10 @@ export default class App extends React.Component<AppProps, AppState> {
               placeholder="Port"
               required
             />
-            <input type="submit" value="Go" />
+            <input className="submit" type="submit" value="Go" />
           </form>
-          <ToastContainer
+        </header>
+        <ToastContainer
             position="top-right"
             autoClose={false}
             newestOnTop={false}
@@ -113,8 +111,7 @@ export default class App extends React.Component<AppProps, AppState> {
             rtl={false}
             draggable
           />
-        </header>
-      </div>
+      </React.Fragment>
     );
   }
 }
