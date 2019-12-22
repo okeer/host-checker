@@ -4,6 +4,7 @@ service: &service
 api:
   image:
     repository: okeer/tcpcheck-api
+    pullPolicy: Always
   <<:
     port: *service
 
