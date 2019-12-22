@@ -12,7 +12,7 @@ const toast_template: ToastOptions = {
   draggable: true
 };
 
-interface AppProps {}
+interface AppProps { }
 
 interface AppState {
   host: string;
@@ -34,7 +34,7 @@ export default class App extends React.Component<AppProps, AppState> {
         reject(new Error("timeout"));
       }, 1000);
 
-      fetch(`check?host=${this.state.host}&port=${this.state.port}`).then(resolve, reject);
+      fetch(`api/v1/check?host=${this.state.host}&port=${this.state.port}`).then(resolve, reject);
     });
   }
 
@@ -104,13 +104,13 @@ export default class App extends React.Component<AppProps, AppState> {
           </form>
         </header>
         <ToastContainer
-            position="top-right"
-            autoClose={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            draggable
-          />
+          position="top-right"
+          autoClose={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          draggable
+        />
       </React.Fragment>
     );
   }

@@ -9,7 +9,7 @@ export async function api(request: express.Request, response: express.Response) 
 
     switch (request.method) {
         case 'GET':
-            if (request.path.localeCompare('/check') === 0) {
+            if (request.path.localeCompare('/api/v1/check') === 0) {
                 if (request.query.port && request.query.host) {
                     let result = await checker
                         .executeCheck(request.query.port, request.query.host);
@@ -21,9 +21,6 @@ export async function api(request: express.Request, response: express.Response) 
                         error: '"host" and "port" query parameters are missing!'
                     }))
                 }
-            }
-            else if (request.path.localeCompare('/healthz') === 0) {
-                response.status(200).send();
             }
             else {
                 response.status(404).send();
