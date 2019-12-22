@@ -4,8 +4,6 @@ import express from 'express';
 const checker = new TCPPortChecker();
 
 export async function api(request: express.Request, response: express.Response) {
-    //await new Promise((resolve, reject) => setTimeout(resolve, 500));
-
     response.set('Access-Control-Allow-Origin', '*');
     response.removeHeader('x-powered-by');
 
@@ -23,6 +21,9 @@ export async function api(request: express.Request, response: express.Response) 
                         error: '"host" and "port" query parameters are missing!'
                     }))
                 }
+            }
+            else if (request.path.localeCompare('/healthz') === 0) {
+                response.status(200).send();
             }
             else {
                 response.status(404).send();
