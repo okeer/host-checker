@@ -5,6 +5,11 @@
 A full stack web applicaton to check port from the server location written in nodejs and React. Dockerized and ready to rock on Kubernetes.
 Helm chars and terraform code to stand up k8s cluster on GCP is also provided. CircleCI config is also present in the repo.
 
+<p float="left">
+  <img src="./.assets/ok.png" alt="The port is open" title="Ok" width="320"/>
+  <img src="./.assets/fail.png" alt="The port is closed or not reachable" title="Timed out" width="320"/>
+</p>
+
 ## Deployment
 
 1. Fork repository and login to CircleCI;
