@@ -1,0 +1,174 @@
+version: 2.1
+
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: hashicorp/terraform:0.11.14
+  environment:
+    TF_IN_AUTOMATION: true
+
+restrict: &restrict
+  filters:
+    branches:
+      only:
+        - gcp-react-nodejs
+
+jobs:
+  build_api:
+    docker:
+      - image: docker:stable
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: build api server
+          working_directory: ./api-server
+          command: |
+            TAG=$(cat VERSION)
+            docker build -t $DOCKER_USER/tcpcheck-api:$TAG .
+            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+            docker push $DOCKER_USER/tcpcheck-api:$TAG
+  build_web:
+    docker:
+      - image: docker:stable
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: build web client
+          working_directory: ./web-client
+          command: |
+            TAG=$(cat VERSION)
+            docker build -t $DOCKER_USER/tcpcheck-web:$TAG .
+            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+            docker push $DOCKER_USER/tcpcheck-web:$TAG
+  init:
+    <<: *defaults
+    steps:
+      - checkout
+      - run:
+          working_directory: ~/repo/tf
+          name: gcp auth
+          command: |
+            echo $GOOGLE_SERVICE_ACCOUNT | base64 -d > keyfile.json
+      - run:
+          working_directory: ~/repo/tf
+          name: init
+          command: echo
+      - run:
+          working_directory: ~/repo/tf
+          name: init
+          command: terraform init -input=false -backend-config "bucket=$GOOGLE_STORAGE_BUCKET"
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+  plan:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          working_directory: ~/repo/tf/
+          name: plan
+          command: terraform plan -no-color -out=tfplan  -input=false -var google_project=$GOOGLE_PROJECT -var google_region=us-central1
+      - store_artifacts:
+          path: ~/repo/tf/tfplan
+          destination: tfplan
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+  apply:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          working_directory: ~/repo/tf/
+          name: apply
+          command: terraform apply -input=false -auto-approve tfplan
+      - run:
+          working_directory: ~/repo/tf/
+          name: show
+          command: terraform show -no-color > tfresult
+      - store_artifacts:
+          path: ~/repo/tf/tfresult
+          destination: tfresult
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+
+  install_charts:
+    docker:
+      - image: google/cloud-sdk:alpine
+    working_directory: ~/repo
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          working_directory: ~/repo/helm
+          name: get k8s credentials
+          command: |
+            gcloud auth activate-service-account --key-file=../tf/keyfile.json
+            gcloud config set project $GOOGLE_PROJECT
+            gcloud container clusters get-credentials general --region us-central1
+            cp ~/.kube/config ./kubeconfig
+      - run:
+          working_directory: ~/repo/helm
+          name: install helm
+          command: |
+            apk add --update --no-cache curl ca-certificates && \
+              curl -L https://get.helm.sh/helm-v3.0.2-linux-amd64.tar.gz |tar xvz && \
+              mv linux-amd64/helm /usr/bin/helm && \
+              chmod +x /usr/bin/helm && \
+              rm -rf linux-amd64 && \
+              apk del curl && \
+              rm -f /var/cache/apk/*
+      - run:
+          working_directory: ~/repo/helm
+          name: install charts
+          command: |
+            helm dep update tcpcheck
+            helm upgrade --install tcpcheck tcpcheck --kubeconfig kubeconfig
+      - store_artifacts:
+          path: ~/repo/helm/kubeconfig
+          destination: kubeconfig
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+
+workflows:
+  version: 2
+  build_deploy:
+    jobs:
+      - build_api:
+          <<: *restrict
+
+      - build_web:
+          <<: *restrict
+
+      - init:
+          <<: *restrict
+
+      - plan:
+          requires:
+            - init
+          <<: *restrict
+
+      - apply:
+          requires:
+            - plan
+          <<: *restrict
+
+      - wait_for_dns_records_creation:
+          type: approval
+          requires:
+            - apply
+          <<: *restrict
+
+      - install_charts:
+          requires:
+            - apply
+            - wait_for_dns_records_creation
+            - build_api
+            - build_web
+          <<: *restrict
