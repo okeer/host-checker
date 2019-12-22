@@ -23,7 +23,8 @@ coverage
 .lock-wscript
 
 # Compiled binary addons (http://nodejs.org/api/addons.html)
-build/Release
+client/build
+server/build
 
 # Dependency directory
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
@@ -37,3 +38,15 @@ node_modules
 .tmp
 
 server/out/**
+
+# Terraform files
+
+.terraform
+.terraform/**
+*.tfvars
+*.tfstate*
+.kubeconfig
+
+# Helm deps ignore
+helm/tcpcheck/charts/**
+Chart.lock

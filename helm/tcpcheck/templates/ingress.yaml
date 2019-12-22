@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ include "tcpcheck.fullname" . }}
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.globalIP.name }}
+    networking.gke.io/managed-certificates: {{ include "tcpcheck.fullname" . }}
+spec:
+  rules:
+  - host: {{ .Values.ingress.domain }}
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: {{ include "tcpcheck.fullname" . }}-web
+          servicePort: {{ .Values.service.port }}
+      - path: /api/v1/*
+        backend:
+          serviceName: {{ include "tcpcheck.fullname" . }}-api
+          servicePort: {{ .Values.service.port }}

@@ -1,0 +1,18 @@
+service: &service
+  port: 80
+
+api:
+  image:
+    repository: okeer/tcpcheck-api
+  <<:
+    port: *service
+
+web:
+  image:
+    repository: okeer/tcpcheck-web
+  <<: *service
+
+ingress:
+  domain: check.okeer.dev
+  globalIP:
+    name: global

@@ -1,0 +1,8 @@
+Do not expect the web app to be available right away - it will take time to provision managed certificate.
+Please use this url to access the web app:
+
+https://{{ .Values.ingress.domain }}
+
+API is here:
+
+https://{{ .Values.ingress.domain }}/api/v1/check?host=example.com&port=80
