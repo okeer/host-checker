@@ -1,0 +1,44 @@
+/* Style */
+
+body {
+  display: flex;
+
+  font-family: 'Roboto', sans-serif;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  margin: 0;
+  min-height: 100vh;
+
+  background-color: black;
+  color: whitesmoke;
+}
+
+.icon {
+  background-color: transparent;
+  height: 10vh;
+  width: 10vh;
+}
+
+header {
+  font-size: 5vh;
+}
+
+article {
+  padding-bottom: 2vh;
+  font-size: 3vh;
+  max-width: 40vw;
+}
+
+footer {
+  font-size: 2vh;
+}
+
+footer, header {
+  padding: 2vh;
+}
+
+*:focus {
+  outline: none;
+}

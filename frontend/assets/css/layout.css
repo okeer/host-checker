@@ -1,0 +1,27 @@
+/* Layout */
+
+body, header, footer {
+    display: flex;
+
+    /* Layout items in the container in column */
+    flex-direction: column;
+}
+
+body {
+    /* Center the things on vertical axis */
+    justify-content: center;
+    /* Center things on horizontal axis */
+    text-align: center;
+}
+
+header, footer {
+    flex: 1;
+    justify-content: flex-end;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+}
